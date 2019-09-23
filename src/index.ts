@@ -91,7 +91,7 @@ export function timeForNBounces(
 ): number {
   // finite sum of flightTimeThisBounce() * COEFFICIENT_OF_RESTITUTION ^ i
   // period = flightTimeThisBounce() * (1 - r^i) / (1-r)
-  if (bounces == 0) {
+  if (bounces === 0) {
     return 0;
   }
   return (
@@ -211,12 +211,14 @@ function main() {
 
   canvas.addEventListener("click", event => handleClick(event, balls));
 
-  setInterval(() => {
+  const callback = () => {
     // FIXME: turn this into a requestAnimationFrame loop once the gravity-calculation
     // in simulateSingleBall() is fixed.
     simulate(balls);
     drawBalls(canvas, balls);
-  }, 1000 * SIMULATION_INTERVAL_IN_SECONDS);
+    setTimeout(callback, 1000 * SIMULATION_INTERVAL_IN_SECONDS);
+  };
+  callback();
 
   window.addEventListener("resize", () => handleResize(canvas));
   handleResize(canvas);
