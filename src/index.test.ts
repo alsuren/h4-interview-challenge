@@ -2,20 +2,13 @@
 // This seems to be related to this issue:
 // https://github.com/codesandbox/codesandbox-client/issues/502
 import {
-  GRAVITY,
   SCATTER,
-  simulateSingleBall,
   garbageCollect,
-  Ball,
   gaussianApproximation,
   drawBalls,
-  addBall,
-  timeToStillness,
-  timeToImpact,
-  flightTimeThisBounce,
-  numberOfBouncesInPeriod,
-  timeForNBounces
+  addBall
 } from ".";
+import { Ball } from "./simulation";
 
 const realRandom = Math.random;
 const fakeRandom = jest.fn();
@@ -78,73 +71,11 @@ describe("drawBalls", () => {
   });
 });
 
-describe("timeToImpact", () => {
-  it("calculates drops from the sky", () => {
-    expect(timeToImpact([0, 2 * -GRAVITY, 0, 0])).toEqual(2);
-  });
-  it("caclulates launches from the floor", () => {
-    expect(timeToImpact([0, 0, 0, -GRAVITY])).toEqual(2);
-  });
-  it("aggrees with flightTimeThisBounce()", () => {
-    expect(timeToImpact([0, 0, 0, -GRAVITY])).toEqual(
-      flightTimeThisBounce(-GRAVITY)
-    );
-  });
-});
-
-describe("timeToStillness()", () => {
-  it("calculates the infinite series", () => {
-    expect(timeToStillness(-GRAVITY)).toEqual(4);
-  });
-  it("is already stopped if stationary", () => {
-    expect(timeToStillness(0)).toEqual(0);
-  });
-});
-
-describe("timeForNBounces()", () => {
-  it("takes no time for 0 bounces", () => {
-    expect(timeForNBounces(-GRAVITY, 0)).toEqual(0);
-  });
-  it("gets a single bounce correct", () => {
-    expect(timeForNBounces(-GRAVITY, 1)).toEqual(
-      flightTimeThisBounce(-GRAVITY)
-    );
-  });
-});
-describe("numberOfBouncesInPeriod()", () => {
-  it("does 0 bounces in 0 seconds", () => {
-    expect(numberOfBouncesInPeriod(-GRAVITY, 0.01)).toEqual(0);
-  });
-  it("does 1 bounce in 1 bounce's time", () => {
-    expect(
-      numberOfBouncesInPeriod(-GRAVITY, flightTimeThisBounce(-GRAVITY))
-    ).toEqual(1);
-  });
-  it("does 0 bounces in less than 1 bounce's time", () => {
-    expect(
-      numberOfBouncesInPeriod(-GRAVITY, flightTimeThisBounce(-GRAVITY) - 0.01)
-    ).toEqual(0);
-  });
-});
-
-describe("simulateSingleBall", () => {
-  it("falls from stationary at 1/2 g t^2", () => {
-    expect(simulateSingleBall([0, 2000, 0, 0], 1)).toEqual([
-      0,
-      2000 + 0.5 * GRAVITY,
-      0,
-      GRAVITY
-    ]);
-  });
-  it("applies horizontal velocity correctly", () => {
-    expect(simulateSingleBall([1000, 0, 1, 0], 1)).toEqual([1001, 0, 1, 0]);
-  });
-});
-
 describe("garbageCollect", () => {
   it("only keeps things that are within horizontal bounds", () => {
     const points = ([[-100], [100], [2000]] as unknown) as Ball[];
-    garbageCollect({ width: 1000 } as HTMLCanvasElement, points);
-    expect(points).toEqual([[100]]);
+    expect(
+      garbageCollect({ width: 1000 } as HTMLCanvasElement, points)
+    ).toEqual([[100]]);
   });
 });
