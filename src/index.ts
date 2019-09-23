@@ -103,17 +103,17 @@ class UserInterface {
 }
 
 function main() {
-  const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-
-  if (!canvas) {
+  if (!document || !document.getElementById("canvas")) {
     // We're being run in jest.
     return;
   }
-  const widget = new UserInterface({ balls: [], canvas });
 
-  canvas.addEventListener("click", event => widget.handleClick(event));
-  window.addEventListener("resize", () => widget.handleResize());
-  widget.handleResize();
+  const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+  const ui = new UserInterface({ balls: [], canvas });
+
+  canvas.addEventListener("click", event => ui.handleClick(event));
+  window.addEventListener("resize", () => ui.handleResize());
+  ui.handleResize();
 }
 
 main();
